@@ -34,12 +34,12 @@ public class ScheduleController {
     }
 
 
-    @PutMapping("/schedule/{id}")
+    @PutMapping("/schedule/{id}/{password}")
     public Long updateMemo(@PathVariable Long id,@PathVariable Long password,@RequestBody ScheduleRequestDto requestDto) {
         return scheduleService.updateSchedule(id, requestDto);
     }
 
-    @DeleteMapping("/schedule/{id}")
+    @DeleteMapping("/schedule/{id}/{password}")
     public Long deleteMemo(@PathVariable Long id,@PathVariable Long password) {
         return scheduleService.deleteSchedule(id);
     }
