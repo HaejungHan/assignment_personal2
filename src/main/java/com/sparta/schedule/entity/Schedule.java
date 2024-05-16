@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -29,18 +28,12 @@ public class Schedule extends Timestamped{
     private String manager;
     @Column(name = "password", nullable = false)
     private Long password;
-    @CreatedDate
-    @DateTimeFormat(pattern = "yyyy-MM-dd/HH:mm:ss")
-    @Column(name = "date", nullable = false)
-    private LocalDateTime date;
-
 
     public Schedule(ScheduleRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
         this.manager = requestDto.getManager();
         this.password = requestDto.getPassword();
-        this.date = LocalDateTime.now();
     }
 
     public void update(ScheduleRequestDto requestDto) {

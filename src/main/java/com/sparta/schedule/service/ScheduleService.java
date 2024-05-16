@@ -18,6 +18,7 @@ public class ScheduleService {
         this.scheduleRepository = scheduleRepository;
     }
 
+
     public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
         // RequestDto -> Entity
         Schedule schedule = new Schedule(requestDto);
@@ -31,15 +32,25 @@ public class ScheduleService {
         return responseDto;
     }
 
-
-    public List<ScheduleResponseDto> getSchedule() {
-        // DB 조회
-        return scheduleRepository.findAll().stream().map(ScheduleResponseDto::new).toList();
+    // 전체조회
+    public List<ScheduleResponseDto> getSchedules() {
+        // DB 조회 (내림차순)
+        return scheduleRepository.findAllByOrderByModifiedAtDesc().stream().map(ScheduleResponseDto::new).toList();
     }
+
+    // 선택한 일정조회
+    public List<ScheduleResponseDto> getSchedule(Long id) {
+        // 해당 일정이 DB에 존재하는지 확인
+        Schedule schedule = findSchedule(id);
+        // DB 조회 선택한 일정 조회
+        return scheduleRepository.findById(id).stream().map(ScheduleResponseDto::new).toList();
+    }
+
+
 
     @Transactional
     public Long updateSchedule(Long id, ScheduleRequestDto requestDto) {
-        // 해당 메모가 DB에 존재하는지 확인
+        // 해당 일정이 DB에 존재하는지 확인
         Schedule schedule = findSchedule(id);
         // 일정 수정
         schedule.update(requestDto);
@@ -48,7 +59,7 @@ public class ScheduleService {
     }
 
     public Long deleteSchedule(Long id) {
-        // 해당 메모가 DB에 존재하는지 확인
+        // 해당 일정이 DB에 존재하는지 확인
         Schedule schedule = findSchedule(id);
         // 일정 삭제
         scheduleRepository.delete(schedule);
