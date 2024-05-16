@@ -1,43 +1,42 @@
+
 package com.sparta.schedule.controller;
 
 import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
-import com.sparta.schedule.entity.Schedule;
+import com.sparta.schedule.service.ScheduleService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 public class ScheduleController {
 
-    private final Map<Long, Schedule> scheduleList = new HashMap<>();
+    private final ScheduleService scheduleService;
+
+    public ScheduleController(ScheduleService scheduleService) {
+        this.scheduleService = scheduleService;
+    }
 
     @PostMapping("/schedule")
     public ScheduleResponseDto createSchedule(@RequestBody ScheduleRequestDto requestDto) {
-        // RequestDto -> Entity
-        Schedule schedule = new Schedule(requestDto);
-
-        // Schedule Max ID Check
-        Long maxID = scheduleList.size() > 0 ? Collections.max(scheduleList.keySet()) + 1 : 1;
-        schedule.setId(maxID);
-
-        // DB 저장
-        scheduleList.put(schedule.getId(), schedule);
-
-        // Entity -> ResponseDto
-        ScheduleResponseDto responseDto = new ScheduleResponseDto(schedule);
-        return responseDto;
+        return scheduleService.createSchedule(requestDto);
     }
 
     @GetMapping("/schedule")
     public List<ScheduleResponseDto> getSchedule() {
-        // Map to List
-        List<ScheduleResponseDto> responseList = scheduleList.values().stream()
-                .map(ScheduleResponseDto::new).toList();
-        return responseList;
+        return scheduleService.getSchedule();
     }
+
+
+    @PutMapping("/schedule/{id}")
+    public Long updateMemo(@PathVariable Long id,@PathVariable Long password,@RequestBody ScheduleRequestDto requestDto) {
+        return scheduleService.updateSchedule(id, requestDto);
+    }
+
+    @DeleteMapping("/schedule/{id}")
+    public Long deleteMemo(@PathVariable Long id,@PathVariable Long password) {
+        return scheduleService.deleteSchedule(id);
+    }
+
 }
