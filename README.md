@@ -1,4 +1,4 @@
-![image](https://github.com/HaejungHan/assignment_personal2/assets/130989670/58307f6c-8dd3-45ec-89c2-fcc672494289)# 🚩 나만의 일정 관리 앱 서버
+# 🚩 나만의 일정 관리 앱 서버
 
 해당 프로그램은 **일정 관리 앱 서버**입니다.<br/>
 이 프로그램은 사용자가 일정 작성(등록), 조회, 수정, 삭제의 기능을 할 수 있는 프로그램입니다. 
@@ -46,7 +46,7 @@
 
 ## 1️⃣ Use Case Diagram
 
-![image](https://github.com/HaejungHan/assignment_personal2/blob/main/src/main/java/com/sparta/schedule/ERD-schedule.png?raw=true)
+![image](https://github.com/HaejungHan/assignment_personal2/assets/130989670/58307f6c-8dd3-45ec-89c2-fcc672494289)
 
 
 ## 2️⃣ ERD DIAGRAM
