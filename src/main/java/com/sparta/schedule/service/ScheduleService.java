@@ -46,16 +46,15 @@ public class ScheduleService {
         return scheduleRepository.findById(id).stream().map(ScheduleResponseDto::new).toList();
     }
 
-
-
     @Transactional
-    public Long updateSchedule(Long id, ScheduleRequestDto requestDto) {
+    public ScheduleResponseDto updateSchedule(Long id,ScheduleRequestDto requestDto,Long password) {
         // 해당 일정이 DB에 존재하는지 확인
         Schedule schedule = findSchedule(id);
         // 일정 수정
         schedule.update(requestDto);
-        return id;
-
+        scheduleRepository.save(schedule);
+        ScheduleResponseDto scheduleResponseDto = new ScheduleResponseDto(schedule);
+        return scheduleResponseDto;
     }
 
     public Long deleteSchedule(Long id) {

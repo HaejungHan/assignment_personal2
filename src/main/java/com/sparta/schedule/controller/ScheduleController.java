@@ -35,8 +35,8 @@ public class ScheduleController {
 
 
     @PutMapping("/schedule/{id}/{password}")
-    public Long updateSchedule(@PathVariable Long id,@PathVariable Long password,@RequestBody ScheduleRequestDto requestDto) {
-        return scheduleService.updateSchedule(id, requestDto);
+    public ScheduleResponseDto updateSchedule(@PathVariable Long id,@RequestBody ScheduleRequestDto requestDto) {
+        return scheduleService.updateSchedule(id,requestDto,requestDto.getPassword());
     }
 
     @DeleteMapping("/schedule/{id}/{password}")
