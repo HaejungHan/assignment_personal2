@@ -51,7 +51,7 @@
 
 ## 2️⃣ ERD DIAGRAM
 
-![image](https://github.com/HaejungHan/assignment_personal2/blob/main/src/main/java/com/sparta/schedule/usecase-schedule.png?raw=true)
+![image](https://github.com/HaejungHan/assignment_personal2/blob/main/src/main/java/com/sparta/schedule/ERD-schedule.png?raw=true)
 
 
 
