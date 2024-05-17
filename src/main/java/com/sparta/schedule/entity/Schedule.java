@@ -28,10 +28,6 @@ public class Schedule extends Timestamped{
     private String manager;
     @Column(name = "password", nullable = false)
     private Long password;
-    @CreatedDate
-    @DateTimeFormat(pattern = "yyyy-MM-dd/HH:mm:ss")
-    @Column(name = "date", nullable = false)
-    private LocalDateTime date;
 
 
     public Schedule(ScheduleRequestDto requestDto) {
@@ -39,7 +35,6 @@ public class Schedule extends Timestamped{
         this.contents = requestDto.getContents();
         this.manager = requestDto.getManager();
         this.password = requestDto.getPassword();
-        this.date = LocalDateTime.now();
     }
 
     public void update(ScheduleRequestDto requestDto) {
