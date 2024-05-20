@@ -25,8 +25,8 @@ public class ScheduleService {
         return responseDto;
     }
 
-    public List<Schedule> getSchedules() {
-        return scheduleRepository.findAllByOrderByModifiedAtDesc();
+    public List<ScheduleResponseDto> getSchedules() {
+        return scheduleRepository.findAllByOrderByModifiedAtDesc().stream().map(ScheduleResponseDto::new).toList();
     }
 
     public ScheduleResponseDto getSchedule(Long id) {
