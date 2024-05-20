@@ -57,7 +57,7 @@
 
 ## 3️⃣ API 명세서
 
-![image](https://github.com/HaejungHan/assignment_personal2/blob/main/src/main/java/com/sparta/schedule/schedule-API.png?raw=true)
+![image](https://github.com/HaejungHan/assignment_personal2/blob/main/src/main/java/com/sparta/schedule/schedule%20-api.png?raw=true)
 
 
 <br>
