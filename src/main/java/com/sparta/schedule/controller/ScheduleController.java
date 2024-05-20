@@ -3,6 +3,7 @@ package com.sparta.schedule.controller;
 
 import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
+import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.service.ScheduleService;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,24 +25,24 @@ public class ScheduleController {
     }
 
     @GetMapping("/schedules")
-    public List<ScheduleResponseDto> getSchedules() {
+    public List<Schedule> getSchedules() {
         return scheduleService.getSchedules();
     }
 
     @GetMapping("/schedule/{id}")
-    public List<ScheduleResponseDto> getSchedule(@PathVariable Long id) {
+    public ScheduleResponseDto getSchedule(@PathVariable Long id) {
         return scheduleService.getSchedule(id);
     }
 
 
-    @PutMapping("/schedule/{id}/{password}")
+    @PutMapping("/schedule/{id}")
     public ScheduleResponseDto updateSchedule(@PathVariable Long id,@RequestBody ScheduleRequestDto requestDto) {
-        return scheduleService.updateSchedule(id,requestDto,requestDto.getPassword());
+        return scheduleService.updateSchedule(id,requestDto);
     }
 
-    @DeleteMapping("/schedule/{id}/{password}")
-    public Long deleteSchedule(@PathVariable Long id,@PathVariable Long password) {
-        return scheduleService.deleteSchedule(id);
+    @DeleteMapping("/schedule/{id}")
+    public void deleteSchedule(@PathVariable Long id,@RequestBody ScheduleRequestDto requestDto) {
+        scheduleService.deleteSchedule(id,requestDto);
     }
 
 }

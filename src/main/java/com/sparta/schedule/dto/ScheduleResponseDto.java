@@ -12,7 +12,6 @@ public class ScheduleResponseDto {
     private String contents;
     private String manager;
     private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
 
 
     public ScheduleResponseDto(Schedule schedule) {
@@ -21,6 +20,5 @@ public class ScheduleResponseDto {
         this.contents = schedule.getContents();
         this.manager = schedule.getManager();
         this.createdAt = schedule.getCreatedAt();
-        this.modifiedAt = schedule.getModifiedAt();
     }
 }
