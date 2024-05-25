@@ -1,9 +1,12 @@
 package com.sparta.schedule.dto;
 
+import com.sparta.schedule.entity.Comment;
 import com.sparta.schedule.entity.Schedule;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class ScheduleResponseDto {
@@ -13,8 +16,9 @@ public class ScheduleResponseDto {
     private String manager;
     private LocalDateTime createdAt;
 
+    private List<Comment> commentList = new ArrayList<>();
 
-    public ScheduleResponseDto(Schedule schedule) {
+    public ScheduleResponseDto(Schedule schedule){
         this.id = schedule.getId();
         this.title = schedule.getTitle();
         this.contents = schedule.getContents();
