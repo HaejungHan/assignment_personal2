@@ -30,19 +30,19 @@ public class Schedule extends Timestamped {
     @Column(name = "password", nullable = false)
     private String password;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY) // 회원정보가 필요할 때만 가져오도록 lazy타입으로 설정
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @OneToMany(mappedBy = "schedule")
     private List<Comment> commentList = new ArrayList<>();
 
-    public Schedule(ScheduleRequestDto requestDto) {
-//        this.user = user;
+    public Schedule(ScheduleRequestDto requestDto, User user) {
+        this.user = user;
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
         this.manager = requestDto.getManager();
-        this.password = requestDto.getPassword();
+        this.password = user.getPassword();
     }
 
     public void update(ScheduleRequestDto requestDto) {

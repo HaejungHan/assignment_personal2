@@ -3,11 +3,13 @@ package com.sparta.schedule.service;
 import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.entity.Schedule;
+import com.sparta.schedule.entity.User;
 import com.sparta.schedule.repository.ScheduleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,27 +18,49 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
 
-    public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
-        Schedule schedule = scheduleRepository.save(new Schedule(requestDto));
-        ScheduleResponseDto responseDto = new ScheduleResponseDto(schedule);
-        return responseDto;
+    // 회원의 일정 등록
+    public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto, User user) {
+        Schedule schedule = scheduleRepository.save(new Schedule(requestDto, user));
+        return new ScheduleResponseDto(schedule);
     }
 
-    public List<ScheduleResponseDto> getSchedules() {
-        return scheduleRepository.findAllByOrderByModifiedAtDesc().stream().map(ScheduleResponseDto::new).toList();
+    // 회원의 일정 전체 조회
+    public List<ScheduleResponseDto> getSchedules(User user) {
+        List<Schedule> schedules = scheduleRepository.findAllByUser(user);
+        List<ScheduleResponseDto> responseDtoList = new ArrayList<>();
+        for (Schedule schedule : schedules) {
+            responseDtoList.add(new ScheduleResponseDto(schedule));
+        }
+        return responseDtoList;
     }
 
-    public ScheduleResponseDto getSchedule(Long id) {
+    // 회원의 선택한 일정 조회
+        public ScheduleResponseDto getSchedule(Long id) {
         Schedule schedule = findSchedule(id);
         ScheduleResponseDto responseDto = new ScheduleResponseDto(schedule);
         return responseDto;
     }
 
+    // 권한이 admin일 경우 전체회원의 일정 조회
+        public List<ScheduleResponseDto> getAllSchedules() {
+        List<Schedule> schedules = scheduleRepository.findAll();
+        List<ScheduleResponseDto> responseDtoList = new ArrayList<>();
+        for (Schedule schedule : schedules) {
+            responseDtoList.add(new ScheduleResponseDto(schedule));
+        }
+        return responseDtoList;
+    }
+
+    // 선택한 일정 수정
     @Transactional
-    public ScheduleResponseDto updateSchedule(Long id,ScheduleRequestDto requestDto) {
+    public ScheduleResponseDto updateSchedule(Long id,ScheduleRequestDto requestDto,User user) {
         // 해당 일정이 DB에 존재하는지 확인
         Schedule schedule = findSchedule(id);
-        // 일정 수정
+        // 작성자와 현 사용자가 일치한지 확인
+        if(!schedule.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
+        }
+        // 일정 등록할 때 설정한 비밀번호와 일치하는지 확인
         if(checkPWAndFindSchedule(schedule, requestDto)) {
         schedule.update(requestDto);
         } else {
@@ -46,9 +70,16 @@ public class ScheduleService {
         return scheduleResponseDto;
     }
 
-    public void deleteSchedule(Long id,ScheduleRequestDto requestDto) {
+    // 선택한 일정 삭제
+    @Transactional
+    public void deleteSchedule(Long id,ScheduleRequestDto requestDto, User user) {
         // 해당 일정이 DB에 존재하는지 확인
         Schedule schedule = findSchedule(id);
+        // 작성자와 현 사용자가 일치한지 확인
+        if(!schedule.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
+        }
+        // 일정 등록할 때 설정한 비밀번호와 일치하는지 확인
         if(checkPWAndFindSchedule(schedule, requestDto)) {
             scheduleRepository.delete(schedule);
         }
