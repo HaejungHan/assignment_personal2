@@ -1,9 +1,7 @@
 package com.sparta.schedule.service;
 
-import com.sparta.schedule.dto.CommentResponseDto;
 import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
-import com.sparta.schedule.entity.Comment;
 import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.entity.User;
 import com.sparta.schedule.repository.CommentRepository;
@@ -76,11 +74,11 @@ public class ScheduleService {
         if(!schedule.getUser().getId().equals(user.getId())) {
             throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
         }
-        // 일정 등록할 때 설정한 비밀번호와 일치하는지 확인
+        // 사용자의 비밀번호와 일치하는지 확인
         if(checkPWAndFindSchedule(schedule, requestDto)) {
         schedule.update(requestDto);
         } else {
-            throw new IllegalArgumentException("패스워드가 일치하지 않습니다.");
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         ScheduleResponseDto scheduleResponseDto = new ScheduleResponseDto(schedule);
         return scheduleResponseDto;

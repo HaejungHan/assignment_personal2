@@ -1,15 +1,14 @@
 
 package com.sparta.schedule.controller;
 
-import com.sparta.schedule.dto.CommentResponseDto;
 import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
-import com.sparta.schedule.entity.User;
 import com.sparta.schedule.security.UserDetailsImpl;
 import com.sparta.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,9 +25,10 @@ public class ScheduleController {
 
     // 회원의 일정 등록
     @PostMapping("/schedule")
-    public ScheduleResponseDto createSchedule(@RequestBody @Valid ScheduleRequestDto requestDto,
+    public ResponseEntity<String> createSchedule(@RequestBody @Valid ScheduleRequestDto requestDto,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return scheduleService.createSchedule(requestDto, userDetails.getUser());
+        scheduleService.createSchedule(requestDto, userDetails.getUser());
+        return new ResponseEntity<>("일정이 성공적으로 등록되었습니다.", HttpStatus.OK);
     }
 
     // 사용자의 일정 조회
@@ -58,18 +58,20 @@ public class ScheduleController {
 
     // 작성한 사용자의 선택한 일정 수정
     @PutMapping("/user/schedule/{id}")
-    public ScheduleResponseDto updateSchedule(@PathVariable Long id,
+    public ResponseEntity<String> updateSchedule(@PathVariable Long id,
                                               @RequestBody @Valid ScheduleRequestDto requestDto,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return scheduleService.updateSchedule(id,requestDto, userDetails.getUser());
+        scheduleService.updateSchedule(id,requestDto, userDetails.getUser());
+        return new ResponseEntity<>("일정이 성공적으로 수정되었습니다.", HttpStatus.OK);
     }
 
     // 작성한 사용자의 선택한 일정 삭제
     @DeleteMapping("/user/schedule/{id}")
-    public void deleteSchedule(@PathVariable Long id,
+    public ResponseEntity<String> deleteSchedule(@PathVariable Long id,
                                @RequestBody @Valid ScheduleRequestDto requestDto,
                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
         scheduleService.deleteSchedule(id,requestDto, userDetails.getUser());
+        return new ResponseEntity<>("일정이 성공적으로 삭제되었습니다.", HttpStatus.OK);
     }
 
 

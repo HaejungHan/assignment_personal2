@@ -5,12 +5,12 @@ import lombok.Getter;
 
 @Getter
 public class ScheduleRequestDto {
-    @NotBlank
+    @NotBlank(message = "일정의 제목을 입력해주세요.")
     private String title;
-    @NotBlank
+    @NotBlank(message = "일정의 내용을 입력해주세요.")
     private String contents;
-    @NotBlank
+    @NotBlank(message = "담당자의 이름을 입력해주세요.")
     private String manager;
-    @NotBlank
+    @NotBlank(message = "사용자의 비밀번호를 입력해주세요.")
     private String password;
 }

@@ -2,8 +2,6 @@ package com.sparta.schedule.service;
 
 import com.sparta.schedule.dto.CommentRequestDto;
 import com.sparta.schedule.dto.CommentResponseDto;
-import com.sparta.schedule.dto.ScheduleRequestDto;
-import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.entity.Comment;
 import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.entity.User;
@@ -11,7 +9,6 @@ import com.sparta.schedule.repository.CommentRepository;
 import com.sparta.schedule.repository.ScheduleRepository;
 import com.sparta.schedule.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
