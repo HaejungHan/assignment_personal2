@@ -1,6 +1,5 @@
 package com.sparta.schedule.jwt;
 
-
 import com.sparta.schedule.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -21,12 +20,14 @@ import java.util.Base64;
 import java.util.Date;
 
 @Component
-public class JwtUtil {
+public class JwtUtil { // JWT token provider
     // JWT 데이터
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String REFRESH_TOKEN_HEADER = "RefreshToken";
     public static final String AUTHORIZATION_KEY = "auth";
     public static final String BEARER_PREFIX = "Bearer ";
-    private final long TOKEN_EXPIRATION_TIME = 60 * 60 * 1000L; // 60분
+    private final long ACCESS_TOKEN_EXPIRATION_TIME = 60 * 60 * 1000L; // 60분
+    private final long REFRESH_TOKEN_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 7; // 7일
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
@@ -41,7 +42,7 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    // JWT 토큰 생성
+    // JWT 엑세스 토큰 생성
     public String createToken(String username, UserRoleEnum role) {
         Date date = new Date();
 
@@ -49,22 +50,41 @@ public class JwtUtil {
                 Jwts.builder()
                         .setSubject(username) // 사용자 식별자값(ID)
                         .claim(AUTHORIZATION_KEY, role) // 사용자 권한
-                        .setExpiration(new Date(date.getTime() + TOKEN_EXPIRATION_TIME)) // 만료 시간
+                        .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_EXPIRATION_TIME)) // 만료 시간
                         .setIssuedAt(date) // 발급일
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
                         .compact();
     }
 
-    // 생성된 JWT 토큰 Cookie에 저장
-    public void addJwtToCookie(String token, HttpServletResponse res) {
-        try {
-            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
+    // JWT 리프레시 토큰 생성
+    public String createRefreshToken(String username, UserRoleEnum role) {
+        Date date = new Date();
+        return BEARER_PREFIX +
+                Jwts.builder()
+                        .setSubject(username)
+                        .claim(AUTHORIZATION_KEY, role)
+                        .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_EXPIRATION_TIME))
+                        .setIssuedAt(date)
+                        .signWith(key, signatureAlgorithm)
+                        .compact();
+    }
 
-            Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
-            cookie.setPath("/");
+    // 생성된 JWT 토큰 Cookie에 저장
+    public void addJwtToCookie(String accessToken, HttpServletResponse res, String refreshToken) {
+        try {
+            accessToken= URLEncoder.encode(accessToken, "utf-8").replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
+            refreshToken = URLEncoder.encode(refreshToken, "utf-8").replaceAll("\\+", "%20");
+
+            //엑세스 토큰
+            Cookie accessCookie = new Cookie(AUTHORIZATION_HEADER, accessToken); // Name-Value
+            accessCookie.setPath("/");
+            //리프레쉬 토큰
+            Cookie refreshCookie = new Cookie(REFRESH_TOKEN_HEADER, refreshToken); // Name-Value
+            accessCookie.setPath("/");
 
             // Response 객체에 Cookie 추가
-            res.addCookie(cookie);
+            res.addCookie(accessCookie);
+            res.addCookie(refreshCookie);
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage());
         }
@@ -80,20 +100,23 @@ public class JwtUtil {
         throw new NullPointerException("Not Found Token");
     }
 
-    // JWT 토큰 검증
+    // JWT 엑세스 토큰 검증
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+                     return true;
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
-            logger.error("유효하지 않는 JWT 서명 입니다.");
-        } catch (ExpiredJwtException | IllegalArgumentException e) {
-            logger.error("토큰이 유효하지 않습니다.");
+            logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+        } catch (ExpiredJwtException e) {
+            logger.error("Expired JWT token, 만료된 JWT token 입니다.");
         } catch (UnsupportedJwtException e) {
-            logger.error("지원되지 않는 JWT 토큰 입니다.");
+            logger.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+        } catch (IllegalArgumentException e) {
+            logger.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
         }
         return false;
     }
+
 
     // header 에서 JWT 가져오기
     public String getJwtFromHeader(HttpServletRequest req) {
@@ -104,10 +127,20 @@ public class JwtUtil {
         return null;
     }
 
+    // header에서  리프레시 토큰 가져오기
+    public String getRefreshTokenFromHeader(HttpServletRequest req) {
+        String refreshToken = req.getHeader(REFRESH_TOKEN_HEADER);
+        if (StringUtils.hasText(refreshToken) && refreshToken.startsWith(BEARER_PREFIX)){
+            return refreshToken.substring(7);
+        }
+        return null;
+    }
+
     // JWT 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
+
 
 
 }

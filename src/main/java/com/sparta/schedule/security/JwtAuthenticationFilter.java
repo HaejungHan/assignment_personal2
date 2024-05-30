@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.schedule.dto.LoginRequestDto;
 import com.sparta.schedule.entity.UserRoleEnum;
 import com.sparta.schedule.jwt.JwtUtil;
-import com.sparta.schedule.dto.LoginRequestDto;
-import com.sparta.schedule.security.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

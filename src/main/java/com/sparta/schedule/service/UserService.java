@@ -59,11 +59,13 @@ public class UserService {
             throw new IllegalArgumentException("회원을 찾을 수 없습니다.");
         }
 
+
+
         //JWT 생성 및 쿠키에 저장 후 response객체에 추가
         String accessToken = jwtUtil.createToken(user.getUsername(), user.getRole());
-        String refreshToken = jwtUtil.createRefreshToken();
+        String refreshToken = jwtUtil.createRefreshToken(user.getUsername(), user.getRole());
 
-        jwtUtil.addJwtToCookie(accessToken, response);
+        jwtUtil.addJwtToCookie(accessToken, response, refreshToken);
     }
 
 }
