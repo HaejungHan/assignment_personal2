@@ -14,6 +14,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -40,6 +43,16 @@ public class CommentService {
         Comment comment = commentRepository.save(new Comment(schedule, requestDto, user));
         CommentResponseDto responseDto = new CommentResponseDto(schedule, comment);
         return responseDto;
+    }
+
+    // 로그인한 유저의 작성한 댓글 전체조회
+    public List<CommentResponseDto> getComments(User user) {
+        List<Comment> commentList = commentRepository.findAllByUser(user);
+        List<CommentResponseDto> responseDtoList = new ArrayList<>();
+        for (CommentResponseDto responseDto : responseDtoList) {
+            responseDtoList.add(responseDto);
+        }
+        return responseDtoList;
     }
 
     // 댓글 수정

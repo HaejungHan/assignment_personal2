@@ -11,4 +11,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     List<Schedule> findAllByUser(User user);
 
+//    List<Schedule> findAllByCommentInSchedule(Long scheduleId);
+
 }

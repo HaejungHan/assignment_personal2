@@ -1,7 +1,6 @@
 package com.sparta.schedule.security;
 
 import com.sparta.schedule.jwt.JwtUtil;
-import com.sparta.schedule.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -40,7 +39,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+            Claims info = jwtUtil.getUserInfoFromToken(tokenValue); // JWT playload 저장되는 정보
 
             try {
                 setAuthentication(info.getSubject());

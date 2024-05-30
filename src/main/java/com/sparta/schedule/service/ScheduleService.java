@@ -1,10 +1,14 @@
 package com.sparta.schedule.service;
 
+import com.sparta.schedule.dto.CommentResponseDto;
 import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
+import com.sparta.schedule.entity.Comment;
 import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.entity.User;
+import com.sparta.schedule.repository.CommentRepository;
 import com.sparta.schedule.repository.ScheduleRepository;
+import com.sparta.schedule.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +21,8 @@ import java.util.List;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     // 회원의 일정 등록
     public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto, User user) {
@@ -34,12 +40,22 @@ public class ScheduleService {
         return responseDtoList;
     }
 
-    // 회원의 선택한 일정 조회
+    // 선택한 일정 조회
         public ScheduleResponseDto getSchedule(Long id) {
         Schedule schedule = findSchedule(id);
         ScheduleResponseDto responseDto = new ScheduleResponseDto(schedule);
         return responseDto;
     }
+
+    // 선택한 일정의 댓글 전체 조회
+//    public List<ScheduleResponseDto> getAllCommentInSchedule(Long scheduleId) {
+//        List<Comment> comments = commentRepository.findAllByCommentInSchedule(scheduleId);
+//        List<ScheduleResponseDto> commentList = new ArrayList<>();
+//        for (ScheduleResponseDto scheduleResponseDto : commentList) {
+//            commentList.add(scheduleResponseDto);
+//        }
+//        return commentList;
+//    }
 
     // 권한이 admin일 경우 전체회원의 일정 조회
         public List<ScheduleResponseDto> getAllSchedules() {
@@ -98,6 +114,5 @@ public class ScheduleService {
                 new IllegalArgumentException("선택한 일정은 존재하지 않습니다.")
         );
     }
-
 
 }

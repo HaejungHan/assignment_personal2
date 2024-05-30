@@ -1,6 +1,7 @@
 
 package com.sparta.schedule.controller;
 
+import com.sparta.schedule.dto.CommentResponseDto;
 import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.entity.User;
@@ -29,7 +30,7 @@ public class ScheduleController {
         return scheduleService.createSchedule(requestDto, userDetails.getUser());
     }
 
-    // 일정 전체 조회
+    // 일정 조회
     @GetMapping("/schedules")
     public List<ScheduleResponseDto> getSchedules(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return scheduleService.getSchedules(userDetails.getUser());
@@ -40,6 +41,12 @@ public class ScheduleController {
     public ScheduleResponseDto getSchedule(@PathVariable Long id) {
         return scheduleService.getSchedule(id);
     }
+
+    // 선택한 일정의 댓글 조회
+//    @GetMapping("/schdulde/{id}/comments")
+//    public List<CommentResponseDto> getAllCommentInSchedule(@PathVariable Long scheduleId) {
+//        return scheduleService.getAllCommentInSchedule(scheduleId);
+//    }
 
     // 작성한 사용자의 선택한 일정 수정
     @PutMapping("/schedule/{id}")

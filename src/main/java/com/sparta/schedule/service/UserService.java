@@ -7,6 +7,7 @@ import com.sparta.schedule.entity.UserRoleEnum;
 import com.sparta.schedule.jwt.JwtUtil;
 import com.sparta.schedule.repository.ScheduleRepository;
 import com.sparta.schedule.repository.UserRepository;
+import com.sparta.schedule.security.UserDetailsServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
 
     // 회원가입
     public void signup(SignupRequestDto requestDto) {
@@ -57,8 +60,10 @@ public class UserService {
         }
 
         //JWT 생성 및 쿠키에 저장 후 response객체에 추가
-        String token = jwtUtil.createToken(user.getUsername(), user.getRole());
-        jwtUtil.addJwtToCookie(token, response);
+        String accessToken = jwtUtil.createToken(user.getUsername(), user.getRole());
+        String refreshToken = jwtUtil.createRefreshToken();
+
+        jwtUtil.addJwtToCookie(accessToken, response);
     }
 
 }
