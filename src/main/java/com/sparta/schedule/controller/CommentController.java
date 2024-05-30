@@ -10,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,12 +23,21 @@ public class CommentController {
     private final CommentService commentService;
 
     // 댓글 등록
+
     @PostMapping("/{scheduleId}/comment")
     public CommentResponseDto createComment(@PathVariable Long scheduleId,
                                             @RequestBody @Valid CommentRequestDto commentRequestDto,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.createComment(scheduleId, commentRequestDto, userDetails.getUser());
     }
+
+    // 댓글 전체 조회
+    @GetMapping("/comments")
+    public List<CommentResponseDto> getAllComment() {
+        return commentService.getAllComment();
+    }
+
+
     // 댓글 수정
     @PutMapping("/{scheduleId}/comment/{commentId}")
     public ResponseEntity<String> updateComment(

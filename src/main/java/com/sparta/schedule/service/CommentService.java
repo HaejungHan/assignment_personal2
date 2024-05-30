@@ -11,6 +11,7 @@ import com.sparta.schedule.repository.CommentRepository;
 import com.sparta.schedule.repository.ScheduleRepository;
 import com.sparta.schedule.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -45,12 +46,12 @@ public class CommentService {
         return responseDto;
     }
 
-    // 로그인한 유저의 작성한 댓글 전체조회
-    public List<CommentResponseDto> getComments(User user) {
-        List<Comment> commentList = commentRepository.findAllByUser(user);
+    // 댓글 전체조회
+    public List<CommentResponseDto> getAllComment() {
+        List<Comment> commentList = commentRepository.findAll();
         List<CommentResponseDto> responseDtoList = new ArrayList<>();
-        for (CommentResponseDto responseDto : responseDtoList) {
-            responseDtoList.add(responseDto);
+        for (Comment responseDto : commentList) {
+            responseDtoList.add(new CommentResponseDto(responseDto));
         }
         return responseDtoList;
     }

@@ -20,4 +20,10 @@ public class CommentResponseDto {
         this.contents = comment.getContents();
         this.createdAt = comment.getCreatedAt();
     }
+
+    public CommentResponseDto(Comment comment) {
+        this.id = comment.getId();
+        this.contents = comment.getContents();
+        this.createdAt = comment.getCreatedAt();
+    }
 }

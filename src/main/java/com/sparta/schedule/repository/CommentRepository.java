@@ -10,4 +10,7 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 //    List<Comment> findByScheduleId(Long schedule_id);
     List<Comment> findAllByUser(User user);
+
+//    List<Comment> findAllByCommentInSchedule(Long scheduleId);
+
 }

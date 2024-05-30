@@ -9,6 +9,7 @@ import com.sparta.schedule.security.UserDetailsImpl;
 import com.sparta.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +31,8 @@ public class ScheduleController {
         return scheduleService.createSchedule(requestDto, userDetails.getUser());
     }
 
-    // 일정 조회
-    @GetMapping("/schedules")
+    // 사용자의 일정 조회
+    @GetMapping("/user/schedules")
     public List<ScheduleResponseDto> getSchedules(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return scheduleService.getSchedules(userDetails.getUser());
     }
@@ -42,14 +43,21 @@ public class ScheduleController {
         return scheduleService.getSchedule(id);
     }
 
-    // 선택한 일정의 댓글 조회
+    // 전체 일정 조회
+    @GetMapping("/schedules")
+    public List<ScheduleResponseDto> getAllSchedule() {
+        return scheduleService.getAllSchedule();
+    }
+
+
+//    // 선택한 일정의 댓글 조회
 //    @GetMapping("/schdulde/{id}/comments")
 //    public List<CommentResponseDto> getAllCommentInSchedule(@PathVariable Long scheduleId) {
 //        return scheduleService.getAllCommentInSchedule(scheduleId);
 //    }
 
     // 작성한 사용자의 선택한 일정 수정
-    @PutMapping("/schedule/{id}")
+    @PutMapping("/user/schedule/{id}")
     public ScheduleResponseDto updateSchedule(@PathVariable Long id,
                                               @RequestBody @Valid ScheduleRequestDto requestDto,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -57,18 +65,13 @@ public class ScheduleController {
     }
 
     // 작성한 사용자의 선택한 일정 삭제
-    @DeleteMapping("/schedule/{id}")
+    @DeleteMapping("/user/schedule/{id}")
     public void deleteSchedule(@PathVariable Long id,
                                @RequestBody @Valid ScheduleRequestDto requestDto,
                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
         scheduleService.deleteSchedule(id,requestDto, userDetails.getUser());
     }
 
-    // 권한이 admin일 경우 전체 회원의 일정 조회
-    @GetMapping("/admin/schedules")
-    public List<ScheduleResponseDto> getAllSchedules() {
-        return scheduleService.getAllSchedules();
-    }
 
 
 }

@@ -30,7 +30,7 @@ public class ScheduleService {
         return new ScheduleResponseDto(schedule);
     }
 
-    // 회원의 일정 전체 조회
+    // 사용자의 일정 전체 조회
     public List<ScheduleResponseDto> getSchedules(User user) {
         List<Schedule> schedules = scheduleRepository.findAllByUser(user);
         List<ScheduleResponseDto> responseDtoList = new ArrayList<>();
@@ -48,7 +48,7 @@ public class ScheduleService {
     }
 
     // 선택한 일정의 댓글 전체 조회
-//    public List<ScheduleResponseDto> getAllCommentInSchedule(Long scheduleId) {
+//    public List<CommentResponseDto> getAllCommentInSchedule(Long scheduleId) {
 //        List<Comment> comments = commentRepository.findAllByCommentInSchedule(scheduleId);
 //        List<ScheduleResponseDto> commentList = new ArrayList<>();
 //        for (ScheduleResponseDto scheduleResponseDto : commentList) {
@@ -57,8 +57,8 @@ public class ScheduleService {
 //        return commentList;
 //    }
 
-    // 권한이 admin일 경우 전체회원의 일정 조회
-        public List<ScheduleResponseDto> getAllSchedules() {
+    // 전체 일정 조회
+        public List<ScheduleResponseDto> getAllSchedule() {
         List<Schedule> schedules = scheduleRepository.findAll();
         List<ScheduleResponseDto> responseDtoList = new ArrayList<>();
         for (Schedule schedule : schedules) {
@@ -114,5 +114,6 @@ public class ScheduleService {
                 new IllegalArgumentException("선택한 일정은 존재하지 않습니다.")
         );
     }
+
 
 }
