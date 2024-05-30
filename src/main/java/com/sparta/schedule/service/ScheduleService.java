@@ -3,55 +3,97 @@ package com.sparta.schedule.service;
 import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.entity.Schedule;
+import com.sparta.schedule.entity.User;
+import com.sparta.schedule.repository.CommentRepository;
 import com.sparta.schedule.repository.ScheduleRepository;
+import com.sparta.schedule.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
-    public ScheduleService(ScheduleRepository scheduleRepository) {
-        this.scheduleRepository = scheduleRepository;
+    // 회원의 일정 등록
+    public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto, User user) {
+        Schedule schedule = scheduleRepository.save(new Schedule(requestDto, user));
+        return new ScheduleResponseDto(schedule);
     }
 
-    public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
-        Schedule schedule = new Schedule(requestDto);
-        Schedule saveSchedule = scheduleRepository.save(schedule);
-        ScheduleResponseDto responseDto = new ScheduleResponseDto(schedule);
-        return responseDto;
+    // 사용자의 일정 전체 조회
+    public List<ScheduleResponseDto> getSchedules(User user) {
+        List<Schedule> schedules = scheduleRepository.findAllByUser(user);
+        List<ScheduleResponseDto> responseDtoList = new ArrayList<>();
+        for (Schedule schedule : schedules) {
+            responseDtoList.add(new ScheduleResponseDto(schedule));
+        }
+        return responseDtoList;
     }
 
-    public List<ScheduleResponseDto> getSchedules() {
-        return scheduleRepository.findAllByOrderByModifiedAtDesc().stream().map(ScheduleResponseDto::new).toList();
-    }
-
-    public ScheduleResponseDto getSchedule(Long id) {
+    // 선택한 일정 조회
+        public ScheduleResponseDto getSchedule(Long id) {
         Schedule schedule = findSchedule(id);
         ScheduleResponseDto responseDto = new ScheduleResponseDto(schedule);
         return responseDto;
     }
 
+    // 선택한 일정의 댓글 전체 조회
+//    public List<CommentResponseDto> getAllCommentInSchedule(Long scheduleId) {
+//        List<Comment> comments = commentRepository.findAllByCommentInSchedule(scheduleId);
+//        List<ScheduleResponseDto> commentList = new ArrayList<>();
+//        for (ScheduleResponseDto scheduleResponseDto : commentList) {
+//            commentList.add(scheduleResponseDto);
+//        }
+//        return commentList;
+//    }
+
+    // 전체 일정 조회
+        public List<ScheduleResponseDto> getAllSchedule() {
+        List<Schedule> schedules = scheduleRepository.findAll();
+        List<ScheduleResponseDto> responseDtoList = new ArrayList<>();
+        for (Schedule schedule : schedules) {
+            responseDtoList.add(new ScheduleResponseDto(schedule));
+        }
+        return responseDtoList;
+    }
+
+    // 선택한 일정 수정
     @Transactional
-    public ScheduleResponseDto updateSchedule(Long id,ScheduleRequestDto requestDto) {
+    public ScheduleResponseDto updateSchedule(Long id,ScheduleRequestDto requestDto,User user) {
         // 해당 일정이 DB에 존재하는지 확인
         Schedule schedule = findSchedule(id);
-        // 일정 수정
+        // 작성자와 현 사용자가 일치한지 확인
+        if(!schedule.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
+        }
+        // 사용자의 비밀번호와 일치하는지 확인
         if(checkPWAndFindSchedule(schedule, requestDto)) {
         schedule.update(requestDto);
         } else {
-            throw new IllegalArgumentException("패스워드가 일치하지 않습니다.");
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         ScheduleResponseDto scheduleResponseDto = new ScheduleResponseDto(schedule);
         return scheduleResponseDto;
     }
 
-    public void deleteSchedule(Long id,ScheduleRequestDto requestDto) {
+    // 선택한 일정 삭제
+    @Transactional
+    public void deleteSchedule(Long id,ScheduleRequestDto requestDto, User user) {
         // 해당 일정이 DB에 존재하는지 확인
         Schedule schedule = findSchedule(id);
+        // 작성자와 현 사용자가 일치한지 확인
+        if(!schedule.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
+        }
+        // 일정 등록할 때 설정한 비밀번호와 일치하는지 확인
         if(checkPWAndFindSchedule(schedule, requestDto)) {
             scheduleRepository.delete(schedule);
         }

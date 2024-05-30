@@ -1,0 +1,8 @@
+POST /api/schedule/1/comment HTTP/1.1
+Host: example.com
+Content-Type: application/json
+Accept: application/json
+
+{
+  "content": "This is a comment."
+}
