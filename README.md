@@ -45,19 +45,12 @@
 
 
 ## 1️⃣ Use Case Diagram
-
-![image](https://github.com/HaejungHan/assignment_personal2/assets/130989670/58307f6c-8dd3-45ec-89c2-fcc672494289)
-
-
+[UseCaseDiagram](https://www.notion.so/Use-Case-Diagram-ba8cadfec8b84cf68aafb7d9016b911d?pvs=4)
 ## 2️⃣ ERD DIAGRAM
-
-![image](https://github.com/HaejungHan/assignment_personal2/blob/main/src/main/java/com/sparta/schedule/ERD-schedule.png?raw=true)
-
-
-
+[ERD](https://www.notion.so/ERD-Diagram-6fd97cc9e8ce44db83cd26da144943d6?pvs=4)
 ## 3️⃣ API 명세서
+[API명세서](https://www.notion.so/16d2d409a0f1442da0fd413b47f5a1ad?v=233893002e89403bb5a78ab988f3e279&pvs=4)
 
-![image](https://github.com/HaejungHan/assignment_personal2/blob/main/src/main/java/com/sparta/schedule/schedule%20-api.png?raw=true)
 
 
 <br>
