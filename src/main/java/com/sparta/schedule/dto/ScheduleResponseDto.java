@@ -16,7 +16,7 @@ public class ScheduleResponseDto {
     private String manager;
     private LocalDateTime createdAt;
 
-    private List<Comment> commentList = new ArrayList<>();
+    private List<CommentResponseDto> commentList;
 
     public ScheduleResponseDto(Schedule schedule){
         this.id = schedule.getId();
@@ -24,5 +24,13 @@ public class ScheduleResponseDto {
         this.contents = schedule.getContents();
         this.manager = schedule.getManager();
         this.createdAt = schedule.getCreatedAt();
+    }
+    public ScheduleResponseDto(Schedule schedule, List<CommentResponseDto> commentList){
+        this.id = schedule.getId();
+        this.title = schedule.getTitle();
+        this.contents = schedule.getContents();
+        this.manager = schedule.getManager();
+        this.createdAt = schedule.getCreatedAt();
+        this.commentList = commentList;
     }
 }

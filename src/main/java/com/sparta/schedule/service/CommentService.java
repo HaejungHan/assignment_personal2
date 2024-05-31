@@ -2,6 +2,7 @@ package com.sparta.schedule.service;
 
 import com.sparta.schedule.dto.CommentRequestDto;
 import com.sparta.schedule.dto.CommentResponseDto;
+import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.entity.Comment;
 import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.entity.User;
@@ -23,7 +24,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
 
-    // 댓글 등록
+    // 사용자의 댓글 등록
     @Transactional
     public CommentResponseDto createComment(Long scheduleId, CommentRequestDto requestDto, User user) {
         // 선택한 일정의 ID 입력 확인
@@ -43,6 +44,40 @@ public class CommentService {
         return responseDto;
     }
 
+    // 사용자의 댓글 수정
+    @Transactional
+    public CommentResponseDto updateComment(Long scheduleId, Long commentId, CommentRequestDto requestDto, User user) {
+        // 해당 일정이 DB에 존재하는지 확인
+        Schedule schedule = findScheduleById(scheduleId);
+        // 해당 댓글이 DB에 존재하는지 확인
+        Comment comment = findCommentById(commentId);
+        // 댓글 작성자와 수정하려는 사용자가 같은지 확인
+        System.out.println("Comment User ID: " + comment.getUser().getId());
+        System.out.println("Current User ID: " + user.getId());
+
+        if(!comment.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
+        }
+        // 일정 수정
+        comment.update(requestDto);
+
+        CommentResponseDto responseDto = new CommentResponseDto(comment);
+        return responseDto;
+    }
+
+    // 사용자의 댓글 삭제
+    @Transactional
+    public void deleteComment(Long scheduleId, Long commentId,User user) {
+        Schedule schedule = findScheduleById(scheduleId);
+        Comment comment = findCommentById(commentId);
+
+        // 댓글의 작성자와 삭제하려는 사용자와 일치하는지 확인
+        if(!comment.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
+        }
+        commentRepository.delete(comment);
+    }
+
     // 댓글 전체조회
     public List<CommentResponseDto> getAllComment() {
         List<Comment> commentList = commentRepository.findAll();
@@ -53,34 +88,16 @@ public class CommentService {
         return responseDtoList;
     }
 
-    // 댓글 수정
+    // 선택한 일정의 댓글 조회
     @Transactional
-    public CommentResponseDto updateComment(Long scheduleId, Long commentId, CommentRequestDto requestDto, User user) {
-        // 해당 일정이 DB에 존재하는지 확인
-        Schedule schedule = findScheduleById(scheduleId);
-        // 해당 댓글이 DB에 존재하는지 확인
-        Comment comment = findCommentById(commentId);
-        // 댓글 작성자와 수정하려는 사용자가 같은지 확인
-        if(!comment.getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
+    public List<CommentResponseDto> getComments(Long scheduleId) {
+        List<Comment> comments = commentRepository.findByScheduleId(scheduleId);
+
+        List<CommentResponseDto> commentAllList = new ArrayList<>();
+        for (Comment commentResponseDto : comments) {
+            commentAllList.add(new CommentResponseDto(commentResponseDto));
         }
-        // 일정 수정
-        comment.update(requestDto);
-
-        CommentResponseDto responseDto = new CommentResponseDto(schedule, comment);
-        return responseDto;
-    }
-
-    // 댓글 삭제
-    public void deleteComment(Long commentId, Long scheduleId,User user) {
-        Schedule schedule = findScheduleById(scheduleId);
-        Comment comment = findCommentById(commentId);
-
-        // 댓글의 작성자와 삭제하려는 사용자와 일치하는지 확인
-        if(!comment.getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
-        }
-        commentRepository.delete(comment);
+        return commentAllList;
     }
 
     private Schedule findScheduleById(Long scheduleId) {

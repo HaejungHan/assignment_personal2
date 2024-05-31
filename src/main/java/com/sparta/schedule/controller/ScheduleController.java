@@ -4,8 +4,10 @@ package com.sparta.schedule.controller;
 import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.security.UserDetailsImpl;
+import com.sparta.schedule.service.CommentService;
 import com.sparta.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,17 +15,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
+    private final CommentService commentService;
 
-    public ScheduleController(ScheduleService scheduleService) {
-        this.scheduleService = scheduleService;
-    }
 
-    // 회원의 일정 등록
+    // 사용자의 일정 등록
     @PostMapping("/schedule")
     public ResponseEntity<String> createSchedule(@RequestBody @Valid ScheduleRequestDto requestDto,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -37,26 +38,7 @@ public class ScheduleController {
         return scheduleService.getSchedules(userDetails.getUser());
     }
 
-    // 선택한 일정 조회
-    @GetMapping("/schedule/{id}")
-    public ScheduleResponseDto getSchedule(@PathVariable Long id) {
-        return scheduleService.getSchedule(id);
-    }
-
-    // 전체 일정 조회
-    @GetMapping("/schedules")
-    public List<ScheduleResponseDto> getAllSchedule() {
-        return scheduleService.getAllSchedule();
-    }
-
-
-//    // 선택한 일정의 댓글 조회
-//    @GetMapping("/schdulde/{id}/comments")
-//    public List<CommentResponseDto> getAllCommentInSchedule(@PathVariable Long scheduleId) {
-//        return scheduleService.getAllCommentInSchedule(scheduleId);
-//    }
-
-    // 작성한 사용자의 선택한 일정 수정
+    // 사용자의 선택한 일정 수정
     @PutMapping("/user/schedule/{id}")
     public ResponseEntity<String> updateSchedule(@PathVariable Long id,
                                               @RequestBody @Valid ScheduleRequestDto requestDto,
@@ -65,13 +47,24 @@ public class ScheduleController {
         return new ResponseEntity<>("일정이 성공적으로 수정되었습니다.", HttpStatus.OK);
     }
 
-    // 작성한 사용자의 선택한 일정 삭제
+    // 사용자의 선택한 일정 삭제
     @DeleteMapping("/user/schedule/{id}")
     public ResponseEntity<String> deleteSchedule(@PathVariable Long id,
-                               @RequestBody @Valid ScheduleRequestDto requestDto,
                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        scheduleService.deleteSchedule(id,requestDto, userDetails.getUser());
+        scheduleService.deleteSchedule(id, userDetails.getUser());
         return new ResponseEntity<>("일정이 성공적으로 삭제되었습니다.", HttpStatus.OK);
+    }
+
+    // 전체 일정 조회
+    @GetMapping("/schedules")
+    public List<ScheduleResponseDto> getAllSchedule() {
+        return scheduleService.getAllSchedule();
+    }
+
+    // 선택한 일정 조회
+    @GetMapping("/schedule/{id}")
+    public ScheduleResponseDto getScheduleWithComments(@PathVariable Long id) {
+        return scheduleService.getScheduleWithComments(id);
     }
 
 
