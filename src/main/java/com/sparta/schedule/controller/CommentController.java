@@ -15,33 +15,33 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/schedule")
+@RequestMapping("/api")
 public class CommentController {
 
     private final CommentService commentService;
 
     // 사용자의 댓글 등록
-    @PostMapping("/{scheduleId}/comment")
+    @PostMapping("/user/schedule/{scheduleId}/comment")
     public ResponseEntity<String> createComment(@PathVariable Long scheduleId,
-                                            @RequestBody @Valid CommentRequestDto commentRequestDto,
-                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                @RequestBody @Valid CommentRequestDto commentRequestDto,
+                                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
         commentService.createComment(scheduleId, commentRequestDto, userDetails.getUser());
-        return new ResponseEntity<>("댓글이 성공적으로 등록되었습니다.",HttpStatus.OK);
+        return new ResponseEntity<>("댓글이 성공적으로 등록되었습니다.", HttpStatus.OK);
     }
 
     // 사용자의 댓글 수정
-    @PutMapping("/{scheduleId}/comment/{commentId}")
+    @PutMapping("/user/schedule/{scheduleId}/comment/{commentId}")
     public ResponseEntity<String> updateComment(
             @PathVariable Long scheduleId,
             @PathVariable Long commentId,
             @RequestBody @Valid CommentRequestDto commentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-            commentService.updateComment(scheduleId, commentId, commentRequestDto, userDetails.getUser());
-            return new ResponseEntity<>("댓글이 성공적으로 수정되었습니다",HttpStatus.OK);
+        commentService.updateComment(scheduleId, commentId, commentRequestDto, userDetails.getUser());
+        return new ResponseEntity<>("댓글이 성공적으로 수정되었습니다", HttpStatus.OK);
     }
 
     // 사용자의 댓글 삭제
-    @DeleteMapping("/{scheduleId}/comment/{commentId}")
+    @DeleteMapping("/user/{scheduleId}/comment/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable Long scheduleId,
                                                 @PathVariable Long commentId,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -56,7 +56,7 @@ public class CommentController {
     }
 
     // 선택한 일정의 댓글 조회
-    @GetMapping("/{scheduleId}/comments")
+    @GetMapping("/schedule/{scheduleId}/comments")
     public List<CommentResponseDto> getComments(@PathVariable Long scheduleId) {
         return commentService.getComments(scheduleId);
     }

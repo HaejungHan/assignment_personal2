@@ -42,11 +42,11 @@ public class ScheduleService {
 
     // 사용자의 선택한 일정 수정
     @Transactional
-    public ScheduleResponseDto updateSchedule(Long id,ScheduleRequestDto requestDto,User user) {
+    public ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto requestDto, User user) {
         // 해당 일정이 DB에 존재하는지 확인
         Schedule schedule = findSchedule(id);
         // 작성자와 현 사용자가 일치한지 확인
-        if(!schedule.getUser().getId().equals(user.getId())) {
+        if (!schedule.getUser().getId().equals(user.getId())) {
             throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
         }
         // 사용자의 비밀번호와 일치하는지 확인
@@ -65,25 +65,25 @@ public class ScheduleService {
         // 해당 일정이 DB에 존재하는지 확인
         Schedule schedule = findSchedule(id);
         // 작성자와 현 사용자가 일치한지 확인
-        if(!schedule.getUser().getId().equals(user.getId())) {
+        if (!schedule.getUser().getId().equals(user.getId())) {
             throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
         }
         // 일정 등록할 때 설정한 비밀번호와 일치하는지 확인
 //        if(checkPWAndFindSchedule(schedule, requestDto)) {
-            scheduleRepository.delete(schedule);
+        scheduleRepository.delete(schedule);
 //        }
     }
 
     // 선택한 일정과 댓글 조회
-        public ScheduleResponseDto getScheduleWithComments(Long id) {
+    public ScheduleResponseDto getScheduleWithComments(Long id) {
         Schedule schedule = findSchedule(id);
         List<CommentResponseDto> comments = commentService.getComments(id);
-        ScheduleResponseDto responseDto = new ScheduleResponseDto(schedule,comments);
+        ScheduleResponseDto responseDto = new ScheduleResponseDto(schedule, comments);
         return responseDto;
     }
 
     // 전체 일정 조회
-        public List<ScheduleResponseDto> getAllSchedule() {
+    public List<ScheduleResponseDto> getAllSchedule() {
         List<Schedule> schedules = scheduleRepository.findAll();
         List<ScheduleResponseDto> responseDtoList = new ArrayList<>();
         for (Schedule schedule : schedules) {

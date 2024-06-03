@@ -35,7 +35,7 @@ public class UserService {
 
         // 사용자 role
         UserRoleEnum role = UserRoleEnum.USER;
-        if(requestDto.isAdmin()){
+        if (requestDto.isAdmin()) {
             role = UserRoleEnum.ADMIN;
         }
 
@@ -50,10 +50,10 @@ public class UserService {
         String password = requestDto.getPassword();
 
         //사용자 확인
-        User user = userRepository.findByUsername(username).orElseThrow(()->
+        User user = userRepository.findByUsername(username).orElseThrow(() ->
                 new IllegalArgumentException("회원을 찾을 수 없습니다.(아이디 불일치)"));
 
-        if(!user.getPassword().equals(password)){
+        if (!user.getPassword().equals(password)) {
             throw new IllegalArgumentException("회원을 찾을 수 없습니다.(비밀번호 불일치)");
         }
 

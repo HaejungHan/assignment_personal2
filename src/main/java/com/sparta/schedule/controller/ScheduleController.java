@@ -27,7 +27,7 @@ public class ScheduleController {
     // 사용자의 일정 등록
     @PostMapping("/schedule")
     public ResponseEntity<String> createSchedule(@RequestBody @Valid ScheduleRequestDto requestDto,
-                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
         scheduleService.createSchedule(requestDto, userDetails.getUser());
         return new ResponseEntity<>("일정이 성공적으로 등록되었습니다.", HttpStatus.OK);
     }
@@ -41,16 +41,16 @@ public class ScheduleController {
     // 사용자의 선택한 일정 수정
     @PutMapping("/user/schedule/{id}")
     public ResponseEntity<String> updateSchedule(@PathVariable Long id,
-                                              @RequestBody @Valid ScheduleRequestDto requestDto,
-                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        scheduleService.updateSchedule(id,requestDto, userDetails.getUser());
+                                                 @RequestBody @Valid ScheduleRequestDto requestDto,
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        scheduleService.updateSchedule(id, requestDto, userDetails.getUser());
         return new ResponseEntity<>("일정이 성공적으로 수정되었습니다.", HttpStatus.OK);
     }
 
     // 사용자의 선택한 일정 삭제
     @DeleteMapping("/user/schedule/{id}")
     public ResponseEntity<String> deleteSchedule(@PathVariable Long id,
-                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
         scheduleService.deleteSchedule(id, userDetails.getUser());
         return new ResponseEntity<>("일정이 성공적으로 삭제되었습니다.", HttpStatus.OK);
     }
@@ -66,7 +66,6 @@ public class ScheduleController {
     public ScheduleResponseDto getScheduleWithComments(@PathVariable Long id) {
         return scheduleService.getScheduleWithComments(id);
     }
-
 
 
 }

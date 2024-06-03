@@ -2,7 +2,6 @@ package com.sparta.schedule.service;
 
 import com.sparta.schedule.dto.CommentRequestDto;
 import com.sparta.schedule.dto.CommentResponseDto;
-import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.entity.Comment;
 import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.entity.User;
@@ -27,17 +26,9 @@ public class CommentService {
     // 사용자의 댓글 등록
     @Transactional
     public CommentResponseDto createComment(Long scheduleId, CommentRequestDto requestDto, User user) {
-        // 선택한 일정의 ID 입력 확인
-        if(requestDto.getScheduleId() == null) {
-            throw new IllegalArgumentException("선택한 일정 ID를 입력해주세요.");
-        }
         // 해당 일정이 DB에 존재하는지 확인
         Schedule schedule = findScheduleById(scheduleId);
 
-        // 댓글 내용이 비어있는지 확인 - Validation 예외처리 필요
-        if (requestDto.getContents().isEmpty()) {
-            throw new IllegalArgumentException("댓글 내용을 입력해주세요.");
-        }
         // 등록한 댓글 저장
         Comment comment = commentRepository.save(new Comment(schedule, requestDto, user));
         CommentResponseDto responseDto = new CommentResponseDto(schedule, comment);
@@ -51,13 +42,11 @@ public class CommentService {
         Schedule schedule = findScheduleById(scheduleId);
         // 해당 댓글이 DB에 존재하는지 확인
         Comment comment = findCommentById(commentId);
-        // 댓글 작성자와 수정하려는 사용자가 같은지 확인
-        System.out.println("Comment User ID: " + comment.getUser().getId());
-        System.out.println("Current User ID: " + user.getId());
+//        System.out.println("Comment User ID: " + comment.getUser().getId());
+//        System.out.println("Current User ID: " + user.getId());
 
-        if(!comment.getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
-        }
+        // 댓글 작성자와 수정하려는 사용자가 같은지 작성자가 null인지 확인
+        comment.isExistUser(user);
         // 일정 수정
         comment.update(requestDto);
 
@@ -67,14 +56,12 @@ public class CommentService {
 
     // 사용자의 댓글 삭제
     @Transactional
-    public void deleteComment(Long scheduleId, Long commentId,User user) {
+    public void deleteComment(Long scheduleId, Long commentId, User user) {
         Schedule schedule = findScheduleById(scheduleId);
         Comment comment = findCommentById(commentId);
 
-        // 댓글의 작성자와 삭제하려는 사용자와 일치하는지 확인
-        if(!comment.getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
-        }
+        // 댓글 작성자와 수정하려는 사용자가 같은지 작성자가 null인지 확인
+        comment.isExistUser(user);
         commentRepository.delete(comment);
     }
 
@@ -107,7 +94,7 @@ public class CommentService {
     }
 
     private Comment findCommentById(Long commentId) {
-        return commentRepository.findById(commentId).orElseThrow(()->
+        return commentRepository.findById(commentId).orElseThrow(() ->
                 new IllegalArgumentException("선택한 댓글은 존재하지 않습니다.")
         );
     }

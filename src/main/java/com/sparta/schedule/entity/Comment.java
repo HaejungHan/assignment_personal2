@@ -38,5 +38,14 @@ public class Comment extends Timestamped{
         this.contents = requestDto.getContents();
     }
 
+    public boolean isExistUser(User user) {
+        if (this.user != null && this.user.getId().equals(user.getId())) {
+            return true;
+        } else {
+            throw new NullPointerException("작성자만 수정/삭제 할 수 있습니다.");
+        }
+    }
+
+
 
 }
