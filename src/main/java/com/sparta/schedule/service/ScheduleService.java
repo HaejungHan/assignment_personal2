@@ -5,6 +5,8 @@ import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.entity.User;
+import com.sparta.schedule.exceptionhandler.CustomException;
+import com.sparta.schedule.exceptionhandler.ErrorCode;
 import com.sparta.schedule.repository.CommentRepository;
 import com.sparta.schedule.repository.ScheduleRepository;
 import com.sparta.schedule.repository.UserRepository;
@@ -102,7 +104,7 @@ public class ScheduleService {
 
     private Schedule findSchedule(Long id) {
         return scheduleRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("선택한 일정은 존재하지 않습니다.")
+                new CustomException(ErrorCode.POST_NOT_FOUND)
         );
     }
 

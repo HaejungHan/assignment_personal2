@@ -5,15 +5,16 @@ import com.sparta.schedule.dto.CommentResponseDto;
 import com.sparta.schedule.entity.Comment;
 import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.entity.User;
+import com.sparta.schedule.exceptionhandler.CustomException;
+import com.sparta.schedule.exceptionhandler.ErrorCode;
 import com.sparta.schedule.repository.CommentRepository;
 import com.sparta.schedule.repository.ScheduleRepository;
 import com.sparta.schedule.repository.UserRepository;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class CommentService {
 
         // 등록한 댓글 저장
         Comment comment = commentRepository.save(new Comment(schedule, requestDto, user));
-        CommentResponseDto responseDto = new CommentResponseDto(schedule, comment);
+        CommentResponseDto responseDto = new CommentResponseDto(comment);
         return responseDto;
     }
 
@@ -76,12 +77,12 @@ public class CommentService {
     }
 
     // 선택한 일정의 댓글 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public List<CommentResponseDto> getComments(Long scheduleId) {
-        List<Comment> comments = commentRepository.findByScheduleId(scheduleId);
-
+        Schedule schedule = findScheduleById(scheduleId);
+        List<Comment> commentList = schedule.getCommentList();
         List<CommentResponseDto> commentAllList = new ArrayList<>();
-        for (Comment commentResponseDto : comments) {
+        for (Comment commentResponseDto : commentList) {
             commentAllList.add(new CommentResponseDto(commentResponseDto));
         }
         return commentAllList;
@@ -89,13 +90,13 @@ public class CommentService {
 
     private Schedule findScheduleById(Long scheduleId) {
         return scheduleRepository.findById(scheduleId).orElseThrow(() ->
-                new IllegalArgumentException("선택한 일정은 존재하지 않습니다.")
+                new CustomException(ErrorCode.POST_NOT_FOUND)
         );
     }
 
     private Comment findCommentById(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(() ->
-                new IllegalArgumentException("선택한 댓글은 존재하지 않습니다.")
+                new CustomException(ErrorCode.COMMENT_NOT_FOUND)
         );
     }
 
