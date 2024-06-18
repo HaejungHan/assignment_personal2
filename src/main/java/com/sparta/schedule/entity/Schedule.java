@@ -21,9 +21,9 @@ public class Schedule extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="Title", nullable = false)
+    @Column(name= "title", nullable = false)
     private String title;
-    @Column(name = "Contents", nullable = false)
+    @Column(name = "contents", nullable = false)
     private String contents;
     @Column(name = "manager", nullable = false)
     private String manager;
